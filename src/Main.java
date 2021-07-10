@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 	// надеюсь смысловое значение комментария всё ещё можно писать на русском
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//как можно сделать так, чтобы не писать ридер в двух местах
+    //как можно сделать так, чтобы не писать ридер в двух местах
         System.out.println("Приветствую вас на экспериментальной площадке \"Будущий супер программист\"!." +
                         "\nХотите ли сыграть в игру \"Крестики-нолики\"?");
 
@@ -43,11 +43,12 @@ public class Main {
         printGamePole();
         System.out.println("Введите в консоль координаты для постановки крестика");
         //System.out.println(Arrays.deepToString(GamePole));
-        try{
+        /*try{
             String x = reader.readLine();}
         catch (Exception e){
             System.out.println("Что-то пошло не так, извините");
-        }
+        }*/
+        go.readConsole();
 
 
 
