@@ -37,11 +37,34 @@ public class Begining {
         //проверка по системе координат
        // if (consoleCheck.contains(XO)){ }
         if (XO.matches("a1|a2|a3|b1|b2|b3|c1|c2|c3")){
-            System.out.println("ok");}
+            System.out.println("ok");
+            char[] strToArray = XO.toCharArray();
+//            System.out.println(strToArray[0]);
+//            System.out.println(strToArray[1]);
+
+             GamePoleCoord(strToArray[0],strToArray[1]);
+        }
         else {
-            System.out.println("sorry");}
+            System.out.println("Извините, таких координат не существует, попробуйте ещё раз");
+        readConsole();
+        }
+    }
 
 
+    //мой спагетти код
+    public static String[][] addCoord (String a){
+        if (a.equals("a1")){Main.GamePole[1][1]= "X";        }
+    return Main.GamePole;
+    }
+
+    //GamePole [1][1] = X;
+    public static String GamePoleCoord(int a, int b) {
+        String letters = "abc";
+        String numbers = "123";
+        /*if ((a > 7)|| (b>7)) return null; //если номер за пределами доски, возвращаем значение по умолчанию - null
+        else */return (Character.toString(letters.charAt(a)) + numbers.charAt(b));
+        /*charAt - метод, с помощью которого мы извлекаем из строки элемент под переданным номером,
+         здесь - под номерами a и b. Character.toString - метод, который переводит полученный символ в строку*/
     }
 
 }
