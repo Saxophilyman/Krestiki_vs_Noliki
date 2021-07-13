@@ -1,8 +1,14 @@
-public class Player_1 {
-    String name = "Player_1";
-    String mark = "X";
+public class Player {
+    String name;
+    String mark;
 
-    public String getName() {
+    public Player (String name, String mark){
+        this.name = name;
+        this.mark = mark;
+    }
+
+
+    /*public String getName() {
         return name;
     }
 
@@ -16,5 +22,5 @@ public class Player_1 {
 
     public void setMark(String mark) {
         this.mark = mark;
-    }
+    }*/
 }
