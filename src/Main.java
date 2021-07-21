@@ -1,86 +1,47 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
 
-//    public static String[][] GamePole =  {{" ","1","2","3"},{"a"," "," "," "},{"b"," "," "," "},{"c"," "," "," "}};
-
     public static void main(String[] args) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
         System.out.println("Приветствую вас на экспериментальной площадке \"Будущий супер программист\"!." +
                         "\nХотите ли сыграть в игру \"Крестики-нолики\"?");
+        Begin();
+    }
+
+    public static void gameGoOn(){
         Game game = new Game();
-        game.Begin();
         game.Playing();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //printGamePole();
-//      System.out.println("Введите в консоль координаты для постановки крестика");
-        //game.readConsole();
-        //printGamePole();
-
-        //может отдельно отвести приветственное слово в начале игры
-        //нужен отдельный метод отрисовки поля после каждого введённого крестика-нолика
-        //проверка на завершение игры while (заполнено все поле/построен ряд из 3 одинаковых символов)
-        //
-
-
+        System.out.println( "Хотите сыграть ещё раз?");
+        Begin();
     }
 
-    public void superMessage(){
-        System.out.println("Поздравляем ! Вы выиграли эту игру! Хотите сыграть ещё раз?");
+    public static void Begin(){
+        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Ведите в консоль \"да\" или \"нет\"");
+        String s = null;
+        try {s = r.readLine();}
+        catch (Exception e) {System.out.println("Что-то пошло не так, извините"); }
+
+        assert s != null;
+        if (!s.equals("да")&&!s.equals("нет")) {
+            System.out.println("Упс, кто-то ввёл что-то не так"
+                    +"\nПопробуйте ещё раз =^^");
+            Begin();  }
+
+        if (s.equals("да")) {System.out.println("Отлично! Ходит \"Первый игрок\"");
+            gameGoOn();
+        }
+
+        if (s.equals("нет")) {System.out.println("Ну нет так нет");
+            System.exit(0);}
     }
-
-//    public static void printGamePole(){
-//        for (int i = 0; i < GamePole.length; i++) {  //идём по строкам
-//            for (int j = 0; j < GamePole[i].length; j++) {//идём по столбцам
-//                System.out.print(" " + GamePole[i][j] + " "); //вывод элемента
-//            }
-//            System.out.println();//перенос строки ради визуального сохранения табличной формы
-//        }
-
-    }
+}
 
 
 
 
-
-
-
-
-
-/**
+    /**
 
 
 как можно сделать так, чтобы не писать ридер в двух местах
