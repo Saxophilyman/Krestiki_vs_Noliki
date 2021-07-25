@@ -5,59 +5,60 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Приветствую вас на экспериментальной площадке \"Будущий супер программист\"!." +
-                        "\nХотите ли сыграть в игру \"Крестики-нолики\"?");
-        Begin();
+                "\nХотите ли сыграть в игру \"Крестики-нолики\"?");
+        beginingGame();
     }
 
-    public static void gameGoOn(){
+    private static void playingFullGame() {
         Game game = new Game();
-        game.Playing();
-        System.out.println( "Хотите сыграть ещё раз?");
-        Begin();
+        game.playingGame();
+        System.out.println("Хотите сыграть ещё раз?");
+        beginingGame();
     }
 
-    public static void Begin(){
-        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+    private static void beginingGame() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Ведите в консоль \"да\" или \"нет\"");
-        String s = null;
-        try {s = r.readLine();}
-        catch (Exception e) {System.out.println("Что-то пошло не так, извините"); }
-
-        assert s != null;
-        if (!s.equals("да")&&!s.equals("нет")) {
-            System.out.println("Упс, кто-то ввёл что-то не так"
-                    +"\nПопробуйте ещё раз =^^");
-            Begin();  }
-
-        if (s.equals("да")) {System.out.println("Отлично! Ходит \"Первый игрок\"");
-            gameGoOn();
+        String readConsole = null;
+        try {
+            readConsole = reader.readLine();
+        } catch (Exception e) {
+            System.out.println("Что-то пошло не так, извините");
         }
 
-        if (s.equals("нет")) {System.out.println("Ну нет так нет");
-            System.exit(0);}
+        assert readConsole != null;
+        if (!readConsole.equals("да") && !readConsole.equals("нет")) {
+            System.out.println("Упс, кто-то ввёл что-то не так"
+                    + "\nПопробуйте ещё раз =^^");
+            beginingGame();
+        }
+
+        if (readConsole.equals("да")) {
+            System.out.println("Отлично! Ходит \"Первый игрок\"");
+            playingFullGame();
+        }
+
+        if (readConsole.equals("нет")) {
+            System.out.println("Ну нет так нет");
+            System.exit(0);
+        }
     }
 }
 
 
-
-
-    /**
-
-
-как можно сделать так, чтобы не писать ридер в двух местах
-Можно ли создавать многомерные динамические массивы в Java???
-ArrayList<String> Pole = new ArrayList<>();
-
-***************************************************************************************************************************************************************
-Integer [][] GamePole = {{0,1,2,3},{0,1,2,3},{0,1,2,3},{0,1,2,3}};
-{"_","_","_","_","_","_","_","_"}  "\u27FC"
-{"-","-","-","-","-","-","-","-"}  "\uD834\uDD16"
-/*String[][] GamePole =  {{" "," |","1","|","2","|","3","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"},
-                        {"a"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"},
-                        {"b"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16",},
-                        {"c"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"}};
-Если брать за основу строки(чтобы не заморачиваться с символами), можно играться с Unicode и настроить поле по "красоте". Из всего что искал - вариант выше самый удобоваримый
-Логика возможно усложнится, но суть останется прежней. в целом для большей простоты оставлю без линий
-
-
-**/
+/**
+ * как можно сделать так, чтобы не писать ридер в двух местах
+ * Можно ли создавать многомерные динамические массивы в Java???
+ * ArrayList<String> Pole = new ArrayList<>();
+ * <p>
+ * **************************************************************************************************************************************************************
+ * Integer [][] GamePole = {{0,1,2,3},{0,1,2,3},{0,1,2,3},{0,1,2,3}};
+ * {"_","_","_","_","_","_","_","_"}  "\u27FC"
+ * {"-","-","-","-","-","-","-","-"}  "\uD834\uDD16"
+ * /*String[][] GamePole =  {{" "," |","1","|","2","|","3","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"},
+ * {"a"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"},
+ * {"b"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16",},
+ * {"c"," |"," ","|"," ","|"," ","|"},{"\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16","\uD834\uDD16"}};
+ * Если брать за основу строки(чтобы не заморачиваться с символами), можно играться с Unicode и настроить поле по "красоте". Из всего что искал - вариант выше самый удобоваримый
+ * Логика возможно усложнится, но суть останется прежней. в целом для большей простоты оставлю без линий
+ **/
