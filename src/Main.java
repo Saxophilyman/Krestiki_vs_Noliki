@@ -6,17 +6,17 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Приветствую вас на экспериментальной площадке \"Будущий супер программист\"!." +
                 "\nХотите ли сыграть в игру \"Крестики-нолики\"?");
-        beginingGame();
+        startNewGame();
     }
 
-    private static void playingFullGame() {
+    private static void playCrossesZeroes() {
         Game game = new Game();
-        game.playingGame();
+        game.startGame();
         System.out.println("Хотите сыграть ещё раз?");
-        beginingGame();
+        startNewGame();
     }
 
-    private static void beginingGame() {
+    private static void startNewGame() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Ведите в консоль \"да\" или \"нет\"");
         String readConsole = null;
@@ -30,12 +30,12 @@ public class Main {
         if (!readConsole.equals("да") && !readConsole.equals("нет")) {
             System.out.println("Упс, кто-то ввёл что-то не так"
                     + "\nПопробуйте ещё раз =^^");
-            beginingGame();
+            startNewGame();
         }
 
         if (readConsole.equals("да")) {
             System.out.println("Отлично! Ходит \"Первый игрок\"");
-            playingFullGame();
+            playCrossesZeroes();
         }
 
         if (readConsole.equals("нет")) {
