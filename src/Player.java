@@ -1,4 +1,4 @@
-public class Player extends Game{
+public class Player {
         private String name;
         private String mark;
         private String nameMark;
@@ -9,7 +9,15 @@ public class Player extends Game{
             this.nameMark = nameMark;
         }
 
-        void printMessageMoveOfPlayer() {
+    public String getMark() {
+        return mark;
+    }
+
+    public String getNameMark() {
+        return nameMark;
+    }
+
+    void printMessageMoveOfPlayer() {
             System.out.println("Ходит " + this.name + "\nВведите в консоль координаты для постановки " + this.nameMark);
 
         }
