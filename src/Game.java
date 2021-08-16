@@ -4,19 +4,19 @@ import java.util.ArrayList;
 
 public class Game {
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private final String[][] GAME_FIELD = {{" ", " ", " "}, {" ", " ", " "}, {" ", " ", " "}};
-    private String[][] workField = {{" ", " ", " "}, {" ", " ", " "}, {" ", " ", " "}};
+    private final String[][] GAME_FIELD = new String[3][3];
+    private String[][] workField = new String[3][3];
     private String[][] decorField = {{"/", "1", "2", "3"}, {"a"}, {"b"}, {"c"}};
     private ArrayList<String> addedCord = new ArrayList<>();
     private Player playerFirst;
     private Player playerSecond;
 
-    Game (Player first, Player second) {
+    Game(Player first, Player second) {
         playerFirst = first;
         playerSecond = second;
     }
-    
-    
+
+
     private boolean checkIfNotEqualsAddedCord(String x) {
         boolean check = true;
         for (int i = 0; i < addedCord.size(); i++) {
@@ -52,25 +52,25 @@ public class Game {
 //разбить посимвольно и присвоить каждому символу свою координату
 
     private void addCoord(String a, Player player) {
-        char [] firstAndSecondCoordReadConsole = a.toCharArray();
+        char[] firstAndSecondCoordReadConsole = a.toCharArray();
         int firstCoordWorkFieldVertical = firstAndSecondCoordReadConsole[0];
         int secondCoordWorkFieldHorizontal = firstAndSecondCoordReadConsole[1];
-        if (firstCoordWorkFieldVertical == 'a'){
+        if (firstCoordWorkFieldVertical == 'a') {
             firstCoordWorkFieldVertical = 0;
         }
-        if (firstCoordWorkFieldVertical == 'b'){
+        if (firstCoordWorkFieldVertical == 'b') {
             firstCoordWorkFieldVertical = 1;
         }
-        if (firstCoordWorkFieldVertical == 'c'){
+        if (firstCoordWorkFieldVertical == 'c') {
             firstCoordWorkFieldVertical = 2;
         }
-        if (secondCoordWorkFieldHorizontal == '1'){
+        if (secondCoordWorkFieldHorizontal == '1') {
             secondCoordWorkFieldHorizontal = 0;
         }
-        if (secondCoordWorkFieldHorizontal == '2'){
+        if (secondCoordWorkFieldHorizontal == '2') {
             secondCoordWorkFieldHorizontal = 1;
         }
-        if (secondCoordWorkFieldHorizontal == '3'){
+        if (secondCoordWorkFieldHorizontal == '3') {
             secondCoordWorkFieldHorizontal = 2;
         }
 
@@ -90,15 +90,14 @@ public class Game {
         String c1 = workField[2][0];
         String c2 = workField[2][1];
         String c3 = workField[2][2];
-        if ((a1.equals(player.getMark()) && a2.equals(player.getMark()) && a3.equals(player.getMark())) ||
-                (b1.equals(player.getMark()) && b2.equals(player.getMark()) && b3.equals(player.getMark())) ||
-                (c1.equals(player.getMark()) && c2.equals(player.getMark()) && c3.equals(player.getMark())) ||
-                (a1.equals(player.getMark()) && b1.equals(player.getMark()) && c1.equals(player.getMark())) ||
-                (a2.equals(player.getMark()) && b2.equals(player.getMark()) && c2.equals(player.getMark())) ||
-                (a3.equals(player.getMark()) && b3.equals(player.getMark()) && c3.equals(player.getMark())) ||
-                (a1.equals(player.getMark()) && b2.equals(player.getMark()) && c3.equals(player.getMark())) ||
-                (c1.equals(player.getMark()) && b2.equals(player.getMark()) && a3.equals(player.getMark())))
-        {
+        if ((player.getMark().equals(a1) && player.getMark().equals(a2) && player.getMark().equals(a3)) ||
+                (player.getMark().equals(b1) && player.getMark().equals(b2) && player.getMark().equals(b3)) ||
+                (player.getMark().equals(c1) && player.getMark().equals(c2) && player.getMark().equals(c3)) ||
+                (player.getMark().equals(a1) && player.getMark().equals(b1) && player.getMark().equals(c1)) ||
+                (player.getMark().equals(a2) && player.getMark().equals(b2) && player.getMark().equals(c2)) ||
+                (player.getMark().equals(a3) && player.getMark().equals(b3) && player.getMark().equals(c3)) ||
+                (player.getMark().equals(a1) && player.getMark().equals(b2) && player.getMark().equals(c3)) ||
+                (player.getMark().equals(c1) && player.getMark().equals(b2) && player.getMark().equals(a3))) {
             System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
             gameNotEnd = false;
         } else if (addedCord.size() > 8) {
@@ -132,16 +131,21 @@ public class Game {
 
 
     public void printGameField() {
-        int j =0;
+        int j = 0;
 
         for (int lineDecor = 0; lineDecor < decorField.length; lineDecor++) {
-            System.out.print(" " + decorField[0][lineDecor] + " ");}
+            System.out.print(" " + decorField[0][lineDecor] + " ");
+        }
         System.out.println();
         for (int tabDecor = 1; tabDecor < decorField.length; tabDecor++) {
             System.out.print(" " + decorField[tabDecor][0] + " ");
-            for (int i = 0;  i < workField.length; i++) {  //идём по строкам
-                System.out.print(" " + workField[j][i] + " "); //вывод элемента
-
+            for (int i = 0; i < workField.length; i++) {
+                String currentLetter = workField[j][i];
+                if (currentLetter == null) {
+                    System.out.print(" " + " " + " ");
+                } else {
+                    System.out.print(" " + currentLetter + " "); //вывод элемента
+                }
             }
             j++;
             System.out.println();//перенос строки ради визуального сохранения табличной формы
