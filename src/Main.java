@@ -9,6 +9,8 @@ public class Main {
         startNewGame();
     }
 
+
+
     private static void playCrossesZeroes() {
         Player playerFirst = new Player("Player_1", "X", "крестика");
         Player playerSecond = new Player("Player_2", "O", "нолика");
@@ -20,7 +22,7 @@ public class Main {
 
     private static void startNewGame() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Ведите в консоль \"да\" или \"нет\"");
+        System.out.println("Ведите в консоль \"y\" или \"n\"");
         String readConsole = null;
         try {
             readConsole = reader.readLine();
@@ -29,18 +31,19 @@ public class Main {
         }
 
         assert readConsole != null;
-        if (!readConsole.equals("да") && !readConsole.equals("нет")) {
+        if (!readConsole.equals("y") && !readConsole.equals("n")) {
             System.out.println("Упс, кто-то ввёл что-то не так"
                     + "\nПопробуйте ещё раз =^^");
             startNewGame();
         }
 
-        if (readConsole.equals("да")) {
-            System.out.println("Отлично! Ходит \"Первый игрок\"");
+        if (readConsole.equals("y")) {
+            System.out.println("Отлично!");
+          //          "Ходит \"Первый игрок\"");
             playCrossesZeroes();
         }
 
-        if (readConsole.equals("нет")) {
+        if (readConsole.equals("y")) {
             System.out.println("Ну нет так нет");
             System.exit(0);
         }
