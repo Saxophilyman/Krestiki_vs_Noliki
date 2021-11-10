@@ -10,7 +10,6 @@ public class Main {
     }
 
 
-
     private static void playCrossesZeroes() {
         Player playerFirst = new Player("Player_1", "X", "крестика");
         Player playerSecond = new Player("Player_2", "O", "нолика");
@@ -39,7 +38,7 @@ public class Main {
 
         if (readConsole.equals("y")) {
             System.out.println("Отлично!");
-          //          "Ходит \"Первый игрок\"");
+            //          "Ходит \"Первый игрок\"");
             playCrossesZeroes();
         }
 
