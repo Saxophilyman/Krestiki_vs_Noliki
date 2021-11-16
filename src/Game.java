@@ -53,44 +53,55 @@ public class Game {
     private void createPlayFieldSize() {
         System.out.println("Введите цифрами в консоль размеры поля, на котором хотите сыграть от 3 до 10 включительно.");
         horizontalFieldSize = getFieldSize("строк", "горизонталь");
-        checkInputFieldSize(horizontalFieldSize, "Количество строк по горизонтали", "строк", "горизонталь");
+        //checkInputFieldSize(horizontalFieldSize, "Количество строк по горизонтали", "строк", "горизонталь");
         System.out.println("Истинный Gor " + horizontalFieldSize);
         verticalFieldSize = getFieldSize("столбцов", "вертикаль");
-        checkInputFieldSize(verticalFieldSize, "Количество столбцов по вертикали", "столбцов", "вертикаль");
+        //checkInputFieldSize(verticalFieldSize, "Количество столбцов по вертикали", "столбцов", "вертикаль");
         System.out.println("Истинный Ver " + verticalFieldSize);
         workField = new String[horizontalFieldSize][verticalFieldSize];
     }
 
     //Чтение параметров и запуск метода по считыванию размеров поля
     private static int getFieldSize(String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Количество " + indicatingOfLinesOrColumns + " (" + indicatingOfHorizontalOrVertical + ")" + ":");
-        return readConcoleFieldSize();
+        return readConcoleFieldSize(indicatingOfLinesOrColumns);
     }
 
     //Считывание размеров поля
-    private static int readConcoleFieldSize() {
+    private static int readConcoleFieldSize(String indicatingOfLinesOrColumns) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String readConsoleSizeFromConsole = null;
-        int iVal = 0;
+        String readConsoleSize = null;
+        int turnNumberOfFieldSize = 0;
         try {
-            readConsoleSizeFromConsole = reader.readLine();
+            readConsoleSize = reader.readLine();
         } catch (Exception e) {
             System.out.println("Что-то пошло не так, извините");
         }
 
-        assert readConsoleSizeFromConsole != null;
-        if (isInteger(readConsoleSizeFromConsole)) {
-            iVal = Integer.parseInt(readConsoleSizeFromConsole);
-            return iVal;
+        assert readConsoleSize != null;
+        if (isInteger(readConsoleSize)) {
+            turnNumberOfFieldSize = Integer.parseInt(readConsoleSize);
+            if (fieldSizeDiapazonIsValid(turnNumberOfFieldSize)){
+                System.out.println("Поздравляю! Вы всё сделали правильно");
+                return turnNumberOfFieldSize;
+            }
+            else {
+                System.out.println("Сэр, минуточку! Мы же договаривались, что размеры поля должны быть от 3 до 10." +
+                        "\n" + "Давайте попробуем ещё раз." +
+                        "\n" +  "Введите цифрами в консоль количество " + indicatingOfLinesOrColumns + ".");
+                return readConcoleFieldSize(indicatingOfLinesOrColumns);
+            }
         } else {
-            System.out.println("Вы определённо где-то ошиблись при вводе. "
-                    + "\nМы ещё работаем над нашим проектом..." +
-                    "\nА пока что введите любое число и выслушайте какой вы жопорук!");
-            //return
-                    readConcoleFieldSize();
+            System.out.println("Вы определённо где-то ошиблись при вводе. " + "\nПопробуйте ещё раз.");
+//                    + "\nМы ещё работаем над нашим проектом..." +
+//                    "\nА пока что введите любое число и выслушайте какой вы жопорук!");
+            return readConcoleFieldSize(indicatingOfLinesOrColumns);
+ /* Идея в том, чтобы при непосредственном возвращении опустить метод checkInputFieldSize
+ и совершить проверку диапазона на месте, сократив код и вызов "лишнего" метода
+  */
         }
-        return iVal;
+        //return iVal;
         //почему записывается первый раз??? а не "правильный"
     }
 
@@ -107,30 +118,36 @@ public class Game {
         return false;
     }
 
-    //Запуск метода проверки диапазона поля от 3 до 10 и обработка неправильного значения
-    private void checkInputFieldSize(int valueOfHorizontalOrVertical, String messageIndicatingForHorizontalOrVertical,
-                                     String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
-        System.out.println("Получили " + valueOfHorizontalOrVertical);
-        while (!isValid(valueOfHorizontalOrVertical)) {
-            System.out.println("Отлично Блятъ! " +
-                    "\n" + "Мы же договаривались, что размеры поля должны быть от 3 до 10." +
-                    "\n" + "Давайте попробуем ещё раз." +
-                    "\n" +  "Введите цифрами в консоль размеры поля, на котором хотите сыграть.");
+//    private void checkInputReadConsoleSizeForField(int valueOfHorizontalOrVertical){
+//        while (!isValid(valueOfHorizontalOrVertical)) {
+//
+//        }
+//    }
 
-            valueOfHorizontalOrVertical = getFieldSize(indicatingOfLinesOrColumns, indicatingOfHorizontalOrVertical);
-        }
-        System.out.println("Поздравляю! Хоть что-то вы можете сделать правильно"
-                + "\n" + messageIndicatingForHorizontalOrVertical + " равно " + valueOfHorizontalOrVertical);
-        if (indicatingOfLinesOrColumns.equals("строк")){
-            horizontalFieldSize = valueOfHorizontalOrVertical;
-        }
-        if (indicatingOfLinesOrColumns.equals("столбцов")){
-            verticalFieldSize = valueOfHorizontalOrVertical;
-        }
-    }
+    //Запуск метода проверки диапазона поля от 3 до 10 и обработка неправильного значения
+//    private void checkInputFieldSize(int valueOfHorizontalOrVertical, String messageIndicatingForHorizontalOrVertical,
+//                                     String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
+//        System.out.println("Получили " + valueOfHorizontalOrVertical);
+//        while (!fieldSizeDiapazonIsValid(valueOfHorizontalOrVertical)) {
+//            System.out.println("Отлично Блятъ! " +
+//                    "\n" + "Мы же договаривались, что размеры поля должны быть от 3 до 10." +
+//                    "\n" + "Давайте попробуем ещё раз." +
+//                    "\n" +  "Введите цифрами в консоль размеры поля, на котором хотите сыграть.");
+//
+//            valueOfHorizontalOrVertical = getFieldSize(indicatingOfLinesOrColumns, indicatingOfHorizontalOrVertical);
+//        }
+//        System.out.println("Поздравляю! Хоть что-то вы можете сделать правильно"
+//                + "\n" + messageIndicatingForHorizontalOrVertical + " равно " + valueOfHorizontalOrVertical);
+//        if (indicatingOfLinesOrColumns.equals("строк")){
+//            horizontalFieldSize = valueOfHorizontalOrVertical;
+//        }
+//        if (indicatingOfLinesOrColumns.equals("столбцов")){
+//            verticalFieldSize = valueOfHorizontalOrVertical;
+//        }
+//    }
 
     //Сама функция проверки диапазона считанного числа с консоли от 3 до 10
-    public static boolean isValid(int size) {
+    public static boolean fieldSizeDiapazonIsValid(int size) {
         return  size >= MIN_FIELD_SIZE && size <= MAX_FIELD_SIZE;
     }
 

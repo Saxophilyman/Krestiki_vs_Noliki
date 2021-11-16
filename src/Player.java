@@ -18,7 +18,7 @@ public class Player {
     }
 
     void printMessageMoveOfPlayer() {
-        System.out.println("Ходит " + this.name + "\nВведите в консоль координаты для постановки " + this.nameMark);
+        System.out.println("Ходит " + this.name + "\nВведите в консоль координаты для постановки " + this.nameMark+"а");
 
     }
 
