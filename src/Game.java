@@ -3,11 +3,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Game {
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    static int Gor;
-    static int Ver;
-    int indexVerFromReadConsole;
-    int indexGorFromReadConsole;
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static final int MIN_FIELD_SIZE = 3;
+    private static final int MAX_FIELD_SIZE = 10;
+    private int horizontalFieldSize;
+    private int verticalFieldSize;
+    int indexVerticalFromReadConsole;
+    int indexGorizontalFromReadConsole;
     private static String[][] workField; //= new String[3][3];
     private String[][] allDecorFullField = {{"/", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
             {"a"}, {"b"}, {"c"}, {"d"}, {"e"}, {"f"}, {"g"}, {"h"}, {"i"}, {"j"}};
@@ -26,19 +28,17 @@ public class Game {
     public void startGame() {
         createPlayFieldSize();
         createPlayDecorField();
-        //checkPrintField (playingDecorField);
         printGameField();
-
         while (true) {
             playerFirst.printMessageMoveOfPlayer();
-            readConsole(playerFirst);
+            readCoordinateFromConsole(playerFirst);
             printGameField();
             if (!checkEndGame(playerFirst)) {
                 System.out.println("Кряяя");
                 break;
             }
             playerSecond.printMessageMoveOfPlayer();
-            readConsole(playerSecond);
+            readCoordinateFromConsole(playerSecond);
             printGameField();
             if (!checkEndGame(playerSecond)) {
                 System.out.println("Кряяя");
@@ -50,63 +50,57 @@ public class Game {
 
     //ШАМАНСТВО С УСТАНОВКОЙ РАЗМЕРОВ ПОЛЯ
     //Создание игрового поля
-    private static void createPlayFieldSize() {
+    private void createPlayFieldSize() {
         System.out.println("Введите цифрами в консоль размеры поля, на котором хотите сыграть от 3 до 10 включительно.");
-        Gor = getFieldSize("строк", "горизонталь");
-        CheckGorVer(Gor, "Количество строк по горизонтали", "строк", "горизонталь");
-        System.out.println("Истинный Gor " + Gor);
-        Ver = getFieldSize("столбцов", "вертикаль");
-        CheckGorVer(Ver, "Количество столбцов по вертикали", "столбцов", "вертикаль");
-        System.out.println("Истинный Ver " + Ver);
-        workField = new String[Gor][Ver];
+        horizontalFieldSize = getFieldSize("строк", "горизонталь");
+        checkInputFieldSize(horizontalFieldSize, "Количество строк по горизонтали", "строк", "горизонталь");
+        System.out.println("Истинный Gor " + horizontalFieldSize);
+        verticalFieldSize = getFieldSize("столбцов", "вертикаль");
+        checkInputFieldSize(verticalFieldSize, "Количество столбцов по вертикали", "столбцов", "вертикаль");
+        System.out.println("Истинный Ver " + verticalFieldSize);
+        workField = new String[horizontalFieldSize][verticalFieldSize];
     }
 
     //Чтение параметров и запуск метода по считыванию размеров поля
-    private static int getFieldSize(String s1, String s2) {
+    private static int getFieldSize(String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Количество " + s1 + " (" + s2 + ")" + ":");
+        System.out.println("Количество " + indicatingOfLinesOrColumns + " (" + indicatingOfHorizontalOrVertical + ")" + ":");
         return readConcoleFieldSize();
     }
 
     //Считывание размеров поля
     private static int readConcoleFieldSize() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String readConsoleSizeT = null;
+        String readConsoleSizeFromConsole = null;
         int iVal = 0;
         try {
-            readConsoleSizeT = reader.readLine();
+            readConsoleSizeFromConsole = reader.readLine();
         } catch (Exception e) {
             System.out.println("Что-то пошло не так, извините");
         }
 
-        assert readConsoleSizeT != null;
-//        if (!isInteger(readConsoleSizeT)) {
-//            System.out.println("Вы где-то ошиблись, попробуйте ещё раз,."
-//                    + "\nВведите ЦИФРАМИ в консоль размеры поля, на котором хотите сыграть");
-//            readConcoleFieldSize();
-//        }
-//        else  iVal = Integer.parseInt(readConsoleSizeT);
-        if (isInteger(readConsoleSizeT)) {
-            iVal = Integer.parseInt(readConsoleSizeT);
+        assert readConsoleSizeFromConsole != null;
+        if (isInteger(readConsoleSizeFromConsole)) {
+            iVal = Integer.parseInt(readConsoleSizeFromConsole);
             return iVal;
         } else {
             System.out.println("Вы определённо где-то ошиблись при вводе. "
                     + "\nМы ещё работаем над нашим проектом..." +
                     "\nА пока что введите любое число и выслушайте какой вы жопорук!");
-            readConcoleFieldSize();
+            //return
+                    readConcoleFieldSize();
         }
         return iVal;
         //почему записывается первый раз??? а не "правильный"
     }
 
     //Проверка на число (введённое в консоль)
-    public static boolean isInteger(String s) {
-        if (s == null || s.equals("")) {
+    public static boolean isInteger(String readConsoleSizeFromConsole) {
+        if (readConsoleSizeFromConsole == null || readConsoleSizeFromConsole.equals("")) {
             return false;
         }
-
         try {
-            Integer.parseInt(s);
+            Integer.parseInt(readConsoleSizeFromConsole);
             return true;
         } catch (NumberFormatException e) {
         }
@@ -114,33 +108,30 @@ public class Game {
     }
 
     //Запуск метода проверки диапазона поля от 3 до 10 и обработка неправильного значения
-    private static void CheckGorVer(int GorVer, String text, String s1, String s2) {
-        System.out.println("Получили " + GorVer);
-        while (!isValid(GorVer)) {
-            System.out.println("Отлично Блятъ! ");
-            System.out.println("Мы же договаривались, что размеры поля должны быть от 3 до 10.");
-            System.out.println("Давайте попробуем ещё раз.");
-            System.out.println("Введите цифрами в консоль размеры поля, на котором хотите сыграть.");
+    private void checkInputFieldSize(int valueOfHorizontalOrVertical, String messageIndicatingForHorizontalOrVertical,
+                                     String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
+        System.out.println("Получили " + valueOfHorizontalOrVertical);
+        while (!isValid(valueOfHorizontalOrVertical)) {
+            System.out.println("Отлично Блятъ! " +
+                    "\n" + "Мы же договаривались, что размеры поля должны быть от 3 до 10." +
+                    "\n" + "Давайте попробуем ещё раз." +
+                    "\n" +  "Введите цифрами в консоль размеры поля, на котором хотите сыграть.");
 
-            GorVer = getFieldSize(s1, s2);
+            valueOfHorizontalOrVertical = getFieldSize(indicatingOfLinesOrColumns, indicatingOfHorizontalOrVertical);
         }
         System.out.println("Поздравляю! Хоть что-то вы можете сделать правильно"
-                + "\n" + text + " равно " + GorVer);
-        if (s1.equals("строк")){
-            Gor = GorVer;
+                + "\n" + messageIndicatingForHorizontalOrVertical + " равно " + valueOfHorizontalOrVertical);
+        if (indicatingOfLinesOrColumns.equals("строк")){
+            horizontalFieldSize = valueOfHorizontalOrVertical;
         }
-        if (s1.equals("столбцов")){
-            Ver = GorVer;
+        if (indicatingOfLinesOrColumns.equals("столбцов")){
+            verticalFieldSize = valueOfHorizontalOrVertical;
         }
-        //return GorVer;
     }
 
     //Сама функция проверки диапазона считанного числа с консоли от 3 до 10
-    public static boolean isValid(int x) {
-        if (x > 2 && x < 11) {
-            return true;
-        }
-        return false;
+    public static boolean isValid(int size) {
+        return  size >= MIN_FIELD_SIZE && size <= MAX_FIELD_SIZE;
     }
 
     /*------------------------------------*/
@@ -157,11 +148,9 @@ public class Game {
 
     //Создание поля для декора
     private void createPlayDecorField() {
-        playingDecorField = new String[Gor + 1][];
-        playingDecorField[0] = new String[Ver + 1];
-        //      System.out.println(Arrays.deepToString(playingDecorField));
+        playingDecorField = new String[horizontalFieldSize + 1][];
+        playingDecorField[0] = new String[verticalFieldSize + 1];
         copyFromAllDecorFullFieldToPlayingDecorField(allDecorFullField, playingDecorField);
-        //     System.out.println(Arrays.deepToString(playingDecorField));
     }
 
     //Копирование актуальных размеров поля-декора для текущей(запущенной в данном цикле) игры
@@ -200,7 +189,7 @@ public class Game {
     }
 
     //Читаем координаты с консоли для постановки крестика-нолика
-    public void readConsole(Player player) {
+    public void readCoordinateFromConsole(Player player) {
         String readCrossZeroCord = null;
         try {
             readCrossZeroCord = reader.readLine();
@@ -211,50 +200,44 @@ public class Game {
         char[] firstAndSecondCoordReadCrossZeroCord = readCrossZeroCord.toCharArray();
         if (!(firstAndSecondCoordReadCrossZeroCord.length == 2)) {
             System.out.println("Извините, таких координат не существует, попробуйте ещё раз");
-            readConsole(player);
+            readCoordinateFromConsole(player);
         } else {
-            String gorCoord = String.valueOf(firstAndSecondCoordReadCrossZeroCord[0]);
-            String verCoord = String.valueOf(firstAndSecondCoordReadCrossZeroCord[1]);
+            String gorizontalCoord = String.valueOf(firstAndSecondCoordReadCrossZeroCord[0]);
+            String verticalCoord = String.valueOf(firstAndSecondCoordReadCrossZeroCord[1]);
 
-            if (checkAddedCoordByIncludedFieldSize(gorCoord, verCoord)) {
-                System.out.println("первый: " + gorCoord + " второй: " + verCoord);
+            if (checkAddedCoordByIncludedFieldSize(gorizontalCoord, verticalCoord)) {
+                System.out.println("первый: " + gorizontalCoord + " второй: " + verticalCoord);
                 if (checkIfNotEqualsAddedCord(readCrossZeroCord)) {
                     System.out.println("Всё нормально, врубай! таких координат ещё не вводили");
                     addedCoord.add(readCrossZeroCord);
-                    System.out.println("Записали введённые координаты для следующих проверок");
-                    //addCoord(player, indexVer, indexGor);
-                    workField[indexGorFromReadConsole - 1][indexVerFromReadConsole - 1] = player.getMark();
+                    workField[indexGorizontalFromReadConsole - 1][indexVerticalFromReadConsole - 1] = player.getMark();
                 } else {
-                    readConsole(player);
+                    readCoordinateFromConsole(player);
                 }
             } else {
                 System.out.println("Извините, таких координат не существует, попробуйте ещё раз");
-                readConsole(player);
+                readCoordinateFromConsole(player);
             }
         }
     }
 
     //Определяем индексы введённых координат для workField
-    private void indexGorVerByWorkField(int Ver, int Gor) {
+    private void indexGorizontalOrVerticalByWorkField(int Ver, int Gor) {
         System.out.println("Индекс вертикали: " + Ver);
-        indexVerFromReadConsole = Ver;
+        indexVerticalFromReadConsole = Ver;
         System.out.println("Индекс горизонтали: " + Gor);
-        indexGorFromReadConsole = Gor;
+        indexGorizontalFromReadConsole = Gor;
     }
 
     //Проверка заданных координат с размерами поля, заданными в текущей игре через декор-поле
-    private boolean checkAddedCoordByIncludedFieldSize(String gorCoord, String verCoord) {
+    private boolean checkAddedCoordByIncludedFieldSize(String gorizontalCoord, String verticalCoord) {
         boolean check = false;
-//        String gorCoord = String.valueOf(GorVer[0]);
-//        String verCoord = String.valueOf(GorVer[1]);
         for (int i = 1; i < playingDecorField[0].length; i++) {
-            if (playingDecorField[0][i].equals(verCoord)) {
-                //System.out.println("Индекс вертикали: " + i);
+            if (playingDecorField[0][i].equals(verticalCoord)) {
                 for (int j = 1; j < playingDecorField.length; j++) {
-                    if (playingDecorField[j][0].equals(gorCoord)) {
-                        //System.out.println("Индекс горизонтали: " + j);
+                    if (playingDecorField[j][0].equals(gorizontalCoord)) {
                         check = true;
-                        indexGorVerByWorkField(i, j);
+                        indexGorizontalOrVerticalByWorkField(i, j);
                         break;
                     }
                 }
@@ -264,77 +247,79 @@ public class Game {
     }
 
     //Проверка, были ли уже заданные данные координаты
-    private boolean checkIfNotEqualsAddedCord(String x) {
+    private boolean checkIfNotEqualsAddedCord(String readCrossZeroCordFromConsole) {
         boolean check = true;
-        for (int i = 0; i < addedCoord.size(); i++) {
-            if (x.equals(addedCoord.get(i))) {
-                System.out.println("Братюнь, эти координаты уже забиты! Разуй глаза и попробуй ещё разок.");
-                check = false;
-            }
+        if (addedCoord.contains(readCrossZeroCordFromConsole)){
+            System.out.println("Братюнь, эти координаты уже забиты! Разуй глаза и попробуй ещё разок.");
+            check = false;
         }
         return check;
+//        for (int i = 0; i < addedCoord.size(); i++) {
+//            if (readCrossZeroCordFromConsole.equals(addedCoord.get(i))) {
+//                System.out.println("Братюнь, эти координаты уже забиты! Разуй глаза и попробуй ещё разок.");
+//                check = false;
+//            }
+//        }
     }
 
-    //присвоить каждому символу свою координату - ПЕРЕФРАЗИРОВАТЬ
-//    private void addCoord(Player player, int gorCoord, int verCoord) {
-//        workField[verCoord-1][gorCoord-1] = player.getMark();
-//    }
 
     //Проверка на окончание игры "три в ряд". Как смог придумать.
     boolean checkEndGame(Player player) {
         boolean gameNotEnd = true;
+        String mark = player.getMark();
 
-
-        for (int idemPoStrokam = 0; idemPoStrokam < workField.length; idemPoStrokam++)
-            for (int idemPoStolbcam = 0; idemPoStolbcam < workField[idemPoStrokam].length; idemPoStolbcam++) {
-                if (idemPoStolbcam < workField[idemPoStrokam].length - 2) {
-                    if ((player.getMark().equals(workField[idemPoStrokam][idemPoStolbcam])) &&
-                            (player.getMark().equals(workField[idemPoStrokam][idemPoStolbcam + 1])) &&
-                            (player.getMark().equals(workField[idemPoStrokam][idemPoStolbcam + 2]))) {
+        for (int goByIndexOfLines = 0; goByIndexOfLines < workField.length; goByIndexOfLines++)
+            for (int goByIndexOfColumns = 0; goByIndexOfColumns < workField[goByIndexOfLines].length; goByIndexOfColumns++) {
+                if (goByIndexOfColumns < workField[goByIndexOfLines].length - 2) {
+                    if ((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
+                            (mark.equals(workField[goByIndexOfLines][goByIndexOfColumns + 1])) &&
+                            (mark.equals(workField[goByIndexOfLines][goByIndexOfColumns + 2]))) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
-                        gameNotEnd = false;
+                        return false;
+                        //gameNotEnd = false;
                     }
                 }
-                if (idemPoStrokam < workField.length - 2) {
-                    if ((player.getMark().equals(workField[idemPoStrokam][idemPoStolbcam])) &&
-                            (player.getMark().equals(workField[idemPoStrokam + 1][idemPoStolbcam])) &&
-                            (player.getMark().equals(workField[idemPoStrokam + 2][idemPoStolbcam]))) {
+                if (goByIndexOfLines < workField.length - 2) {
+                    if ((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
+                            (mark.equals(workField[goByIndexOfLines + 1][goByIndexOfColumns])) &&
+                            (mark.equals(workField[goByIndexOfLines + 2][goByIndexOfColumns]))) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
-                        gameNotEnd = false;
+                        return false;
+                        //gameNotEnd = false;
                     }
                 }
-                if (idemPoStolbcam < workField[idemPoStrokam].length - 2 && idemPoStrokam < workField.length - 2) {
-                    if (((player.getMark().equals(workField[idemPoStrokam][idemPoStolbcam])) &&
-                            (player.getMark().equals(workField[idemPoStrokam + 1][idemPoStolbcam + 1])) &&
-                            (player.getMark().equals(workField[idemPoStrokam + 2][idemPoStolbcam + 2]))) ||
-                            ((player.getMark().equals(workField[idemPoStrokam][workField[idemPoStrokam].length - idemPoStolbcam - 1])) &&
-                                    (player.getMark().equals(workField[idemPoStrokam + 1][workField[idemPoStrokam].length - idemPoStolbcam - 2])) &&
-                                    (player.getMark().equals(workField[idemPoStrokam + 2][workField[idemPoStrokam].length - idemPoStolbcam - 3])))
+                if (goByIndexOfColumns < workField[goByIndexOfLines].length - 2 && goByIndexOfLines < workField.length - 2) {
+                    if (((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
+                            (mark.equals(workField[goByIndexOfLines + 1][goByIndexOfColumns + 1])) &&
+                            (mark.equals(workField[goByIndexOfLines + 2][goByIndexOfColumns + 2]))) ||
+                            ((mark.equals(workField[goByIndexOfLines][workField[goByIndexOfLines].length - goByIndexOfColumns - 1])) &&
+                                    (mark.equals(workField[goByIndexOfLines + 1][workField[goByIndexOfLines].length - goByIndexOfColumns - 2])) &&
+                                    (mark.equals(workField[goByIndexOfLines + 2][workField[goByIndexOfLines].length - goByIndexOfColumns - 3])))
                     ) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
-                        gameNotEnd = false;
+                        return false;
+                        //gameNotEnd = false;
                     }
 
-                } else if (addedCoord.size() > Gor * Ver - 1) {
+                } else if (addedCoord.size() > horizontalFieldSize * verticalFieldSize - 1) {
                     System.out.println("Ничья. Ходов больше нет");
-                    gameNotEnd = false;
+                    return false;
+                    //gameNotEnd = false;
                 }
             }
         return gameNotEnd;
     }
 
-    //Обновление поля. В данной версии не требуется
-//    private static void refreshGamePole(String[][] aSource, String[][] aDestination, ArrayList<String> arr) {
-//        for (int i = 0; i < aSource.length; i++) {
-//            System.arraycopy(aSource[i], 0, aDestination[i], 0, aSource[i].length);
-//        }
-//        arr.clear();
-//    }
-
 }
 
 
-
+/**Я конечно понимаю, что в теории код более понятным должен выходить для чтения, но не могу отвязаться от мысли:
+ * А не дохуя ли длинные названия методов и переменных получаются, это нормально или тут есть ещё какая-то своя особеннность?
+ * И в некотором смысле с непривычки становится ещё запутаннее, т.к. методы схожие и всё об одном и том же
+ * Ну или называть их более корректно-осмысленными предстоит ещё научиться
+ * хотя ведь понятно же, что если "программа" про крестики нолики гор - это горизонталь, разве не так?
+ *
+ * **/
 
 
 
