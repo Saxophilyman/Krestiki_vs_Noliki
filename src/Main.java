@@ -12,7 +12,7 @@ public class Main {
 
     private static void playCrossesZeroes() {
         Player playerFirst = new Player("Player_1", "X", "крестик");
-        Player playerSecond = new Player("Player_2", "O", "нолик");
+        Player playerSecond = new Player("Player_2", "O", "нолика");
         Game game = new Game(playerFirst, playerSecond);
         game.startGame();
         System.out.println("Хотите сыграть ещё раз?");

@@ -6,6 +6,7 @@ public class Game {
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private static final int MIN_FIELD_SIZE = 3;
     private static final int MAX_FIELD_SIZE = 10;
+    private static final int WIN_CHECK_SAME_MARK = 3;
     private int horizontalFieldSize;
     private int verticalFieldSize;
     int indexVerticalFromReadConsole;
@@ -23,7 +24,6 @@ public class Game {
         playerSecond = second;
     }
 
-
     //Механика игры
     public void startGame() {
         createPlayFieldSize();
@@ -33,38 +33,34 @@ public class Game {
             playerFirst.printMessageMoveOfPlayer();
             readCoordinateFromConsole(playerFirst);
             printGameField();
-            if (!checkEndGame(playerFirst)) {
-                System.out.println("Кряяя");
+            if (!checkGameNotEnd(playerFirst)) {
                 break;
             }
             playerSecond.printMessageMoveOfPlayer();
             readCoordinateFromConsole(playerSecond);
             printGameField();
-            if (!checkEndGame(playerSecond)) {
-                System.out.println("Кряяя");
+            if (!checkGameNotEnd(playerSecond)) {
                 break;
             }
         }
     }
 
+    private static void printMessage(String message) {
+        System.out.println(message);
+    }
 
     //ШАМАНСТВО С УСТАНОВКОЙ РАЗМЕРОВ ПОЛЯ
     //Создание игрового поля
     private void createPlayFieldSize() {
         System.out.println("Введите цифрами в консоль размеры поля, на котором хотите сыграть от 3 до 10 включительно.");
         horizontalFieldSize = getFieldSize("строк", "горизонталь");
-        //checkInputFieldSize(horizontalFieldSize, "Количество строк по горизонтали", "строк", "горизонталь");
-        System.out.println("Истинный Gor " + horizontalFieldSize);
         verticalFieldSize = getFieldSize("столбцов", "вертикаль");
-        //checkInputFieldSize(verticalFieldSize, "Количество столбцов по вертикали", "столбцов", "вертикаль");
-        System.out.println("Истинный Ver " + verticalFieldSize);
         workField = new String[horizontalFieldSize][verticalFieldSize];
     }
 
     //Чтение параметров и запуск метода по считыванию размеров поля
     private static int getFieldSize(String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
-        //BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Количество " + indicatingOfLinesOrColumns + " (" + indicatingOfHorizontalOrVertical + ")" + ":");
+        printMessage("Количество " + indicatingOfLinesOrColumns + " (" + indicatingOfHorizontalOrVertical + ")" + ":");
         return readConcoleFieldSize(indicatingOfLinesOrColumns);
     }
 
@@ -82,27 +78,20 @@ public class Game {
         assert readConsoleSize != null;
         if (isInteger(readConsoleSize)) {
             turnNumberOfFieldSize = Integer.parseInt(readConsoleSize);
-            if (fieldSizeDiapazonIsValid(turnNumberOfFieldSize)){
+            if (fieldSizeDiapazonIsValid(turnNumberOfFieldSize)) {
                 System.out.println("Поздравляю! Вы всё сделали правильно");
                 return turnNumberOfFieldSize;
-            }
-            else {
+            } else {
                 System.out.println("Сэр, минуточку! Мы же договаривались, что размеры поля должны быть от 3 до 10." +
                         "\n" + "Давайте попробуем ещё раз." +
-                        "\n" +  "Введите цифрами в консоль количество " + indicatingOfLinesOrColumns + ".");
+                        "\n" + "Введите цифрами в консоль количество " + indicatingOfLinesOrColumns + ".");
                 return readConcoleFieldSize(indicatingOfLinesOrColumns);
             }
         } else {
             System.out.println("Вы определённо где-то ошиблись при вводе. " + "\nПопробуйте ещё раз.");
-//                    + "\nМы ещё работаем над нашим проектом..." +
-//                    "\nА пока что введите любое число и выслушайте какой вы жопорук!");
             return readConcoleFieldSize(indicatingOfLinesOrColumns);
- /* Идея в том, чтобы при непосредственном возвращении опустить метод checkInputFieldSize
- и совершить проверку диапазона на месте, сократив код и вызов "лишнего" метода
-  */
+
         }
-        //return iVal;
-        //почему записывается первый раз??? а не "правильный"
     }
 
     //Проверка на число (введённое в консоль)
@@ -118,51 +107,12 @@ public class Game {
         return false;
     }
 
-//    private void checkInputReadConsoleSizeForField(int valueOfHorizontalOrVertical){
-//        while (!isValid(valueOfHorizontalOrVertical)) {
-//
-//        }
-//    }
-
-    //Запуск метода проверки диапазона поля от 3 до 10 и обработка неправильного значения
-//    private void checkInputFieldSize(int valueOfHorizontalOrVertical, String messageIndicatingForHorizontalOrVertical,
-//                                     String indicatingOfLinesOrColumns, String indicatingOfHorizontalOrVertical) {
-//        System.out.println("Получили " + valueOfHorizontalOrVertical);
-//        while (!fieldSizeDiapazonIsValid(valueOfHorizontalOrVertical)) {
-//            System.out.println("Отлично Блятъ! " +
-//                    "\n" + "Мы же договаривались, что размеры поля должны быть от 3 до 10." +
-//                    "\n" + "Давайте попробуем ещё раз." +
-//                    "\n" +  "Введите цифрами в консоль размеры поля, на котором хотите сыграть.");
-//
-//            valueOfHorizontalOrVertical = getFieldSize(indicatingOfLinesOrColumns, indicatingOfHorizontalOrVertical);
-//        }
-//        System.out.println("Поздравляю! Хоть что-то вы можете сделать правильно"
-//                + "\n" + messageIndicatingForHorizontalOrVertical + " равно " + valueOfHorizontalOrVertical);
-//        if (indicatingOfLinesOrColumns.equals("строк")){
-//            horizontalFieldSize = valueOfHorizontalOrVertical;
-//        }
-//        if (indicatingOfLinesOrColumns.equals("столбцов")){
-//            verticalFieldSize = valueOfHorizontalOrVertical;
-//        }
-//    }
-
     //Сама функция проверки диапазона считанного числа с консоли от 3 до 10
     public static boolean fieldSizeDiapazonIsValid(int size) {
-        return  size >= MIN_FIELD_SIZE && size <= MAX_FIELD_SIZE;
+        return size >= MIN_FIELD_SIZE && size <= MAX_FIELD_SIZE;
     }
 
     /*------------------------------------*/
-
-    //Проверка печатаемого поля (без соединения с декором)
-    static void checkPrintField(String[][] twoDimArray) {
-        for (int i = 0; i < twoDimArray.length; i++) {  //идём по строкам twoDimArray.length
-            for (int j = 0; j < twoDimArray[i].length; j++) {//идём по столбцам twoDimArray[i].length
-                System.out.print(" " + twoDimArray[i][j] + " "); //вывод элемента
-            }
-            System.out.println();//перенос строки ради визуального сохранения табличной формы
-        }
-    }
-
     //Создание поля для декора
     private void createPlayDecorField() {
         playingDecorField = new String[horizontalFieldSize + 1][];
@@ -223,7 +173,6 @@ public class Game {
             String verticalCoord = String.valueOf(firstAndSecondCoordReadCrossZeroCord[1]);
 
             if (checkAddedCoordByIncludedFieldSize(gorizontalCoord, verticalCoord)) {
-                System.out.println("первый: " + gorizontalCoord + " второй: " + verticalCoord);
                 if (checkIfNotEqualsAddedCord(readCrossZeroCord)) {
                     System.out.println("Всё нормально, врубай! таких координат ещё не вводили");
                     addedCoord.add(readCrossZeroCord);
@@ -240,21 +189,19 @@ public class Game {
 
     //Определяем индексы введённых координат для workField
     private void indexGorizontalOrVerticalByWorkField(int Ver, int Gor) {
-        System.out.println("Индекс вертикали: " + Ver);
         indexVerticalFromReadConsole = Ver;
-        System.out.println("Индекс горизонтали: " + Gor);
         indexGorizontalFromReadConsole = Gor;
     }
 
     //Проверка заданных координат с размерами поля, заданными в текущей игре через декор-поле
     private boolean checkAddedCoordByIncludedFieldSize(String gorizontalCoord, String verticalCoord) {
         boolean check = false;
-        for (int i = 1; i < playingDecorField[0].length; i++) {
-            if (playingDecorField[0][i].equals(verticalCoord)) {
-                for (int j = 1; j < playingDecorField.length; j++) {
-                    if (playingDecorField[j][0].equals(gorizontalCoord)) {
+        for (int checkVerticalCoord = 1; checkVerticalCoord < playingDecorField[0].length; checkVerticalCoord++) {
+            if (playingDecorField[0][checkVerticalCoord].equals(verticalCoord)) {
+                for (int checkGorizontalCoord = 1; checkGorizontalCoord < playingDecorField.length; checkGorizontalCoord++) {
+                    if (playingDecorField[checkGorizontalCoord][0].equals(gorizontalCoord)) {
                         check = true;
-                        indexGorizontalOrVerticalByWorkField(i, j);
+                        indexGorizontalOrVerticalByWorkField(checkVerticalCoord, checkGorizontalCoord);
                         break;
                     }
                 }
@@ -266,17 +213,11 @@ public class Game {
     //Проверка, были ли уже заданные данные координаты
     private boolean checkIfNotEqualsAddedCord(String readCrossZeroCordFromConsole) {
         boolean check = true;
-        if (addedCoord.contains(readCrossZeroCordFromConsole)){
+        if (addedCoord.contains(readCrossZeroCordFromConsole)) {
             System.out.println("Братюнь, эти координаты уже забиты! Разуй глаза и попробуй ещё разок.");
             check = false;
         }
         return check;
-//        for (int i = 0; i < addedCoord.size(); i++) {
-//            if (readCrossZeroCordFromConsole.equals(addedCoord.get(i))) {
-//                System.out.println("Братюнь, эти координаты уже забиты! Разуй глаза и попробуй ещё разок.");
-//                check = false;
-//            }
-//        }
     }
 
 
@@ -285,60 +226,244 @@ public class Game {
         boolean gameNotEnd = true;
         String mark = player.getMark();
 
-        for (int goByIndexOfLines = 0; goByIndexOfLines < workField.length; goByIndexOfLines++)
-            for (int goByIndexOfColumns = 0; goByIndexOfColumns < workField[goByIndexOfLines].length; goByIndexOfColumns++) {
-                if (goByIndexOfColumns < workField[goByIndexOfLines].length - 2) {
-                    if ((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
-                            (mark.equals(workField[goByIndexOfLines][goByIndexOfColumns + 1])) &&
-                            (mark.equals(workField[goByIndexOfLines][goByIndexOfColumns + 2]))) {
+        for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++)
+            for (int indexOfColumns = 0; indexOfColumns < workField[indexOfLines].length; indexOfColumns++) {
+                if (indexOfColumns < workField[indexOfLines].length - 2) {
+                    if ((mark.equals(workField[indexOfLines][indexOfColumns])) &&
+                            (mark.equals(workField[indexOfLines][indexOfColumns + 1])) &&
+                            (mark.equals(workField[indexOfLines][indexOfColumns + 2]))) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
                         return false;
-                        //gameNotEnd = false;
                     }
                 }
-                if (goByIndexOfLines < workField.length - 2) {
-                    if ((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
-                            (mark.equals(workField[goByIndexOfLines + 1][goByIndexOfColumns])) &&
-                            (mark.equals(workField[goByIndexOfLines + 2][goByIndexOfColumns]))) {
+                if (indexOfLines < workField.length - 2) {
+                    if ((mark.equals(workField[indexOfLines][indexOfColumns])) &&
+                            (mark.equals(workField[indexOfLines + 1][indexOfColumns])) &&
+                            (mark.equals(workField[indexOfLines + 2][indexOfColumns]))) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
                         return false;
-                        //gameNotEnd = false;
                     }
                 }
-                if (goByIndexOfColumns < workField[goByIndexOfLines].length - 2 && goByIndexOfLines < workField.length - 2) {
-                    if (((mark.equals(workField[goByIndexOfLines][goByIndexOfColumns])) &&
-                            (mark.equals(workField[goByIndexOfLines + 1][goByIndexOfColumns + 1])) &&
-                            (mark.equals(workField[goByIndexOfLines + 2][goByIndexOfColumns + 2]))) ||
-                            ((mark.equals(workField[goByIndexOfLines][workField[goByIndexOfLines].length - goByIndexOfColumns - 1])) &&
-                                    (mark.equals(workField[goByIndexOfLines + 1][workField[goByIndexOfLines].length - goByIndexOfColumns - 2])) &&
-                                    (mark.equals(workField[goByIndexOfLines + 2][workField[goByIndexOfLines].length - goByIndexOfColumns - 3])))
+                if (indexOfColumns < workField[indexOfLines].length - 2 && indexOfLines < workField.length - 2) {
+                    if (((mark.equals(workField[indexOfLines][indexOfColumns])) &&
+                            (mark.equals(workField[indexOfLines + 1][indexOfColumns + 1])) &&
+                            (mark.equals(workField[indexOfLines + 2][indexOfColumns + 2]))) ||
+                            ((mark.equals(workField[indexOfLines][workField[indexOfLines].length - indexOfColumns - 1])) &&
+                                    (mark.equals(workField[indexOfLines + 1][workField[indexOfLines].length - indexOfColumns - 2])) &&
+                                    (mark.equals(workField[indexOfLines + 2][workField[indexOfLines].length - indexOfColumns - 3])))
                     ) {
                         System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
                         return false;
-                        //gameNotEnd = false;
                     }
 
                 } else if (addedCoord.size() > horizontalFieldSize * verticalFieldSize - 1) {
                     System.out.println("Ничья. Ходов больше нет");
                     return false;
-                    //gameNotEnd = false;
                 }
             }
         return gameNotEnd;
     }
 
+    //Проверка на окончание игры "три в ряд" вызовом нескольких методов.
+    private boolean checkGameNotEnd(Player player) {
+        if (checkEndGameByLines(player) || checkEndGameByColumns(player) ||
+                checkEndGameDiagonalFromLeftUpToRightDown(player) || checkEndGameDiagonalFromLeftDownToRightUp(player)) {
+            System.out.println("Поздравляем! " + player.getNameMark() + " Win!");
+            return false;
+        }
+        return true;
+    }
+
+    //Проверка "три в ряд" по горизонтали.
+    private boolean checkEndGameByLines(Player player) {
+        int countSamePlayerMark;
+        for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++) {
+            countSamePlayerMark = 0;
+            for (int indexOfColumns = 0; indexOfColumns < workField[indexOfLines].length; indexOfColumns++) {
+                if (player.getMark().equals(workField[indexOfLines][indexOfColumns])) {
+                    countSamePlayerMark++;
+                    if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+                        return true;
+                    }
+                } else {
+                    countSamePlayerMark = 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    //Проверка "три в ряд" по вертикали.
+    private boolean checkEndGameByColumns(Player player) {
+        int countSamePlayerMark;
+        for (int indexOfColumns = 0; indexOfColumns < workField[0].length; indexOfColumns++) {
+            countSamePlayerMark = 0;
+            for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++) {
+                if (player.getMark().equals(workField[indexOfLines][indexOfColumns])) {
+                    countSamePlayerMark++;
+                    if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+                        return true;
+                    }
+                } else {
+                    countSamePlayerMark = 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    //Проверка "три в ряд" по направлению с левого верхнего угла к правому нижнему.
+    private boolean checkEndGameDiagonalFromLeftUpToRightDown(Player player) {
+        int countSamePlayerMark;
+        for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++)
+            for (int indexOfColumns = 0; indexOfColumns < workField[0].length; indexOfColumns++) {
+                countSamePlayerMark = 0;
+                for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+                     indexOfDiagonalLines < workField.length && indexOfDiagonalColumns < workField[0].length; indexOfDiagonalColumns++, indexOfDiagonalLines++) {
+//                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+//                    System.out.println(workField[indexOfDiagonalLines][indexOfDiagonalColumns]);
+//                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+//                    System.out.println("[" + indexOfDiagonalLines + "][" + indexOfDiagonalColumns + "]");
+                    if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+                        countSamePlayerMark++;
+                        if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+                            return true;
+                        }
+                    } else {
+                        countSamePlayerMark = 0;
+                    }
+                }
+            }
+        return false;
+    }
+
+    //Проверка "три в ряд" по направлению с левого нижнего угла к правому верхнему.
+    private boolean checkEndGameDiagonalFromLeftDownToRightUp(Player player) {
+        int countSamePlayerMark;
+        for (int indexOfLines = workField.length - 1; indexOfLines >= 0; indexOfLines--)
+            for (int indexOfColumns = 0; indexOfColumns < workField[0].length; indexOfColumns++) {
+                countSamePlayerMark = 0;
+                for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+                     indexOfDiagonalLines >= 0 && indexOfDiagonalColumns < workField[0].length; indexOfDiagonalColumns++, indexOfDiagonalLines--) {
+                    if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+                        countSamePlayerMark++;
+                        if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+                            return true;
+                        }
+                    } else {
+                        countSamePlayerMark = 0;
+                    }
+                }
+            }
+        return false;
+    }
+
+    //Проверка счётчика на совпадение подряд 3х символов.
+    private boolean checkThreeSameMarkInOneLine(int samePlayerMark) {
+        if (samePlayerMark == WIN_CHECK_SAME_MARK) {
+            return true;
+        }
+        return false;
+    }
 }
 
 
-/**Я конечно понимаю, что в теории код более понятным должен выходить для чтения, но не могу отвязаться от мысли:
- * А не дохуя ли длинные названия методов и переменных получаются, это нормально или тут есть ещё какая-то своя особеннность?
- * И в некотором смысле с непривычки становится ещё запутаннее, т.к. методы схожие и всё об одном и том же
- * Ну или называть их более корректно-осмысленными предстоит ещё научиться
- * хотя ведь понятно же, что если "программа" про крестики нолики гор - это горизонталь, разве не так?
+/**
+ * Обход массива по диагонали слева направо через 2 двойных цикла
+ * (сначала диагональ по нулевой горизотали, а затем по нулевой вертикали)
+ * зы. проверок меньше, но код объёмнее.
  *
- * **/
+ * private boolean checkEndGameDiagonalFromLeftUpToRightDown(Player player) {
+ * int countSamePlayerMark = 0;
+ * //    for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++)
+ * for (int indexOfColumns = 0, indexOfLines = 0;
+ * indexOfLines < workField.length && indexOfColumns < workField[0].length; indexOfColumns++)
+ * for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+ * indexOfDiagonalLines < workField.length && indexOfDiagonalColumns < workField[0].length;
+ * indexOfDiagonalColumns++, indexOfDiagonalLines++) {
+ * if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+ * countSamePlayerMark++;
+ * if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+ * return true;
+ * }
+ * } else {
+ * countSamePlayerMark = 0;
+ * }
+ * }
+ * <p>
+ * for (int indexOfColumns = 0, indexOfLines = 0;
+ * indexOfLines < workField.length && indexOfColumns < workField[0].length; indexOfLines++)
+ * for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+ * indexOfDiagonalLines < workField.length && indexOfDiagonalColumns < workField[0].length;
+ * indexOfDiagonalColumns++, indexOfDiagonalLines++) {
+ * <p>
+ * //                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+ * //
+ * //                    System.out.println(workField[indexOfDiagonalLines][indexOfDiagonalColumns]);
+ * //
+ * //                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+ * //
+ * //                    System.out.println("[" + indexOfDiagonalLines + "][" + indexOfDiagonalColumns + "]");
+ * <p>
+ * if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+ * countSamePlayerMark++;
+ * if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+ * return true;
+ * }
+ * } else {
+ * countSamePlayerMark = 0;
+ * }
+ * <p>
+ * }
+ * return false;
+ * }
+ **/
+/**
+ private boolean checkEndGameDiagonalFromLeftUpToRightDown(Player player) {
+ int countSamePlayerMark = 0;
+ //    for (int indexOfLines = 0; indexOfLines < workField.length; indexOfLines++)
+ for (int indexOfColumns = 0, indexOfLines = 0;
+ indexOfLines < workField.length && indexOfColumns < workField[0].length; indexOfColumns++)
+ for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+ indexOfDiagonalLines < workField.length && indexOfDiagonalColumns < workField[0].length;
+ indexOfDiagonalColumns++, indexOfDiagonalLines++) {
+ if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+ countSamePlayerMark++;
+ if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+ return true;
+ }
+ } else {
+ countSamePlayerMark = 0;
+ }
+ }
 
+ for (int indexOfColumns = 0, indexOfLines = 0;
+ indexOfLines < workField.length && indexOfColumns < workField[0].length; indexOfLines++)
+ for (int indexOfDiagonalLines = indexOfLines, indexOfDiagonalColumns = indexOfColumns;
+ indexOfDiagonalLines < workField.length && indexOfDiagonalColumns < workField[0].length;
+ indexOfDiagonalColumns++, indexOfDiagonalLines++) {
 
+ //                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+ //
+ //                    System.out.println(workField[indexOfDiagonalLines][indexOfDiagonalColumns]);
+ //
+ //                    try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+ //
+ //                    System.out.println("[" + indexOfDiagonalLines + "][" + indexOfDiagonalColumns + "]");
+
+ if (player.getMark().equals(workField[indexOfDiagonalLines][indexOfDiagonalColumns])) {
+ countSamePlayerMark++;
+ if (checkThreeSameMarkInOneLine(countSamePlayerMark)) {
+ return true;
+ }
+ } else {
+ countSamePlayerMark = 0;
+ }
+
+ }
+ return false;
+ }
+ **/
 
 
 
